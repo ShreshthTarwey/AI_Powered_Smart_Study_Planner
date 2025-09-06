@@ -57,24 +57,28 @@ def tasks_api():
 @main_bp.route('/api/tasks/<int:task_id>', methods=['PUT', 'DELETE'])
 @login_required
 def task_detail_api(task_id):
-    # Get task and verify ownership
     task = Task.query.filter_by(id=task_id, user_id=current_user.id).first()
     if not task:
         return jsonify({'error': 'Task not found'}), 404
-    
+
     if request.method == 'DELETE':
-        # Delete task
         db.session.delete(task)
         db.session.commit()
         return jsonify({'success': True})
-    
+
     if request.method == 'PUT':
-        # Update task status
         data = request.get_json()
         if 'status' in data:
+            old_status = task.status
             task.status = data['status']
             db.session.commit()
-            
+
+            # Award XP only if task just got completed (status changed from pending to completed)
+            if old_status != 'completed' and task.status == 'completed':
+                user = task.user
+                xp_award = 5  # XP per completed task
+                user.xp = (user.xp or 0) + xp_award
+                db.session.commit()
             return jsonify({
                 'id': task.id,
                 'title': task.title,
@@ -82,5 +86,19 @@ def task_detail_api(task_id):
                 'due_date': task.due_date.isoformat(),
                 'status': task.status
             })
-        
         return jsonify({'error': 'No status provided'}), 400
+
+# Add this new route to your main.py
+@main_bp.route('/api/gamification')
+@login_required
+def gamification_api():
+    """Return user's gamification data"""
+    return jsonify({
+        'xp': current_user.xp,
+        'level': current_user.get_level(),
+        'streak': current_user.streak,
+        'total_days_logged': current_user.total_days_logged,
+        'xp_for_next_level': current_user.get_xp_for_next_level(),
+        'level_progress': current_user.get_level_progress(),
+        'last_login_date': current_user.last_login_date.isoformat() if current_user.last_login_date else None
+    })

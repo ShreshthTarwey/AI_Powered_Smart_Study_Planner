@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Smart Study Planner</title>
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
@@ -19,7 +21,7 @@
             <div class="navbar-brand">
                 <h2>Shreshth Builds</h2>
             </div>
-            
+
             <!-- User Area -->
             <div class="navbar-user">
                 <div class="user-avatar">
@@ -39,6 +41,74 @@
                 <h1>Welcome back, {{ user.username }}!</h1>
                 <p class="dashboard-subtitle">Plan your studies efficiently with your personal calendar</p>
             </div>
+            <!-- Add this section after dashboard-header, before calendar-container -->
+
+            <!-- Gamification Stats Section -->
+            <div class="gamification-section">
+                <div class="stats-grid">
+                    <!-- XP and Level Card -->
+                    <div class="stat-card xp-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Level</div>
+                            <div class="stat-value" id="userLevel">1</div>
+                            <div class="stat-sublabel"><span id="userXP">0</span> XP</div>
+                        </div>
+                        <div class="level-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="levelProgress" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-text"><span id="xpToNext">100</span> XP to next level</div>
+                        </div>
+                    </div>
+
+                    <!-- Streak Card -->
+                    <div class="stat-card streak-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Current Streak</div>
+                            <div class="stat-value" id="userStreak">0</div>
+                            <div class="stat-sublabel">consecutive days</div>
+                        </div>
+                        <div class="streak-visual">
+                            <div class="flame-indicator" id="flameIndicator">
+                                <span class="flame-count" id="flameCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Days Card -->
+                    <div class="stat-card days-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Days</div>
+                            <div class="stat-value" id="totalDays">0</div>
+                            <div class="stat-sublabel">logged in</div>
+                        </div>
+                    </div>
+
+                    <!-- Achievement Badge -->
+                    <div class="stat-card achievement-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Achievement</div>
+                            <div class="achievement-badge" id="achievementBadge">
+                                <span class="badge-text">Beginner</span>
+                            </div>
+                            <div class="stat-sublabel" id="achievementDesc">Just getting started!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motivational Quote Section -->
+                <div class="motivation-card">
+                    <div class="motivation-icon">💪</div>
+                    <div class="motivation-content">
+                        <div class="motivation-text" id="motivationText">Welcome back! Ready to achieve your goals
+                            today?</div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Calendar Container -->
             <div class="calendar-container">
@@ -46,20 +116,23 @@
                 <div class="calendar-header">
                     <div class="calendar-nav">
                         <button class="nav-btn" id="prevMonth" aria-label="Previous month">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="m15 18-6-6 6-6"/>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="m15 18-6-6 6-6" />
                             </svg>
                         </button>
                         <h2 class="month-title" id="monthTitle">Loading...</h2>
                         <button class="nav-btn" id="nextMonth" aria-label="Next month">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="m9 18 6-6-6-6"/>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="m9 18 6-6-6-6" />
                             </svg>
                         </button>
                     </div>
                     <button class="add-task-btn" id="addTaskBtn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 5v14m-7-7h14"/>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 5v14m-7-7h14" />
                         </svg>
                         Add Task
                     </button>
@@ -75,7 +148,7 @@
                     <div class="day-header">Thu</div>
                     <div class="day-header">Fri</div>
                     <div class="day-header">Sat</div>
-                    
+
                     <!-- Day cells will be dynamically generated by JS -->
                 </div>
             </div>
@@ -89,11 +162,11 @@
                 <h3 id="modalTitle">Tasks for Selected Date</h3>
                 <button class="modal-close" id="modalClose" aria-label="Close modal">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
+                        <path d="M18 6L6 18M6 6l12 12" />
                     </svg>
                 </button>
             </div>
-            
+
             <div class="modal-body">
                 <!-- Existing Tasks List -->
                 <div class="existing-tasks" id="existingTasks" style="display: none;">
@@ -110,30 +183,32 @@
                             <input type="text" id="taskTitle" name="title" required aria-describedby="titleError">
                             <div class="error-message" id="titleError"></div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="taskDescription">Description</label>
-                            <textarea id="taskDescription" name="description" rows="3" placeholder="Optional description..."></textarea>
+                            <textarea id="taskDescription" name="description" rows="3"
+                                placeholder="Optional description..."></textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="taskDueDate">Due Date</label>
                             <input type="date" id="taskDueDate" name="due_date" required aria-describedby="dateError">
                             <div class="error-message" id="dateError"></div>
                         </div>
-                        
+
                         <div class="form-actions">
                             <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
                             <button type="submit" class="btn-primary" id="saveBtn">
                                 <span class="btn-text">Save Task</span>
                                 <div class="btn-spinner" style="display: none;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M21 12a9 9 0 11-6.219-8.56" />
                                     </svg>
                                 </div>
                             </button>
                         </div>
-                        
+
                         <div class="error-message" id="formError"></div>
                     </form>
                 </div>
@@ -151,4 +226,5 @@
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
+
 </html>

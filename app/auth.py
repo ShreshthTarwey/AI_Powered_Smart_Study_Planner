@@ -28,9 +28,21 @@ def login():
         u = User.query.filter_by(email=email).first()
         if u and u.check_password(pw):
             login_user(u)
+            
+            # NEW: Update daily login and gamification
+            login_success, login_data = u.update_daily_login()
+            
+            if login_success and isinstance(login_data, dict):
+                # Flash gamification messages
+                if login_data['streak_bonus'] > 0:
+                    flash(f'🔥 {login_data["current_streak"]} day streak! Bonus: +{login_data["streak_bonus"]} XP!', 'success')
+                else:
+                    flash(f'📈 Daily login: +{login_data["daily_xp"]} XP! Streak: {login_data["current_streak"]} days', 'success')
+            
             return redirect(url_for('main.dashboard'))
         flash('Invalid credentials','danger')
     return render_template('login.html')
+
 
 @auth_bp.route('/logout')
 @login_required

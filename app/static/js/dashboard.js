@@ -12,14 +12,15 @@
 
 class CalendarDashboard {
     constructor() {
-        this.currentDate = new Date();
-        this.tasks = new Map(); // Map of date strings to task arrays
-        this.selectedDate = null;
+    this.currentDate = new Date();
+    this.tasks = new Map();
+    this.selectedDate = null;
 
-        this.initializeElements();
-        this.attachEventListeners();
-        this.loadTasks();
-        this.renderCalendar();
+    this.initializeElements();
+    this.attachEventListeners();
+    this.loadTasks();
+    this.loadGamificationData(); // ADD THIS LINE
+    this.renderCalendar();
     }
 
     initializeElements() {
@@ -200,41 +201,47 @@ class CalendarDashboard {
      * Update task status via API
      */
     async updateTaskStatus(taskId, status) {
-        try {
-            const response = await fetch(`/api/tasks/${taskId}`, {
-                method: 'PUT',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status })
-            });
+    try {
+        const response = await fetch(`/api/tasks/${taskId}`, {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        });
 
-            if (!response.ok) {
-                throw new Error('Failed to update task');
-            }
-
-            const updatedTask = await response.json();
-
-            // Update local cache
-            this.updateTaskInCache(updatedTask);
-
-            // Update calendar display
-            this.renderCalendar();
-
-            // Update modal if open
-            if (this.selectedDate) {
-                const dayTasks = this.tasks.get(this.formatDateForKey(this.selectedDate)) || [];
-                this.renderTasksList(dayTasks);
-            }
-
-            this.showSuccess('Task updated successfully!');
-
-        } catch (error) {
-            console.error('Error updating task:', error);
-            this.showError('Failed to update task. Please try again.');
+        if (!response.ok) {
+            throw new Error('Failed to update task');
         }
+
+        const updatedTask = await response.json();
+
+        // Update the task in the local cache for the current date grouping
+        this.updateTaskInCache(updatedTask);
+
+        // Re-render the calendar to reflect updated task statuses
+        this.renderCalendar();
+
+        // Re-render tasks in the modal if it's open, to reflect status changes
+        if (this.selectedDate) {
+            const dayTasks = this.tasks.get(this.formatDateForKey(this.selectedDate)) || [];
+            this.renderTasksList(dayTasks);
+        }
+
+        this.showSuccess('Task updated successfully!');
+
+        // If task is marked completed, award XP and reload gamification data
+        if (status === 'completed') {
+            await this.awardTaskCompletionXP(taskId);
+        }
+
+    } catch (error) {
+        console.error('Error updating task:', error);
+        this.showError('Failed to update task. Please try again.');
     }
+}
+
 
     /**
      * Remove task from local cache
@@ -674,6 +681,180 @@ renderTasksList(tasks) {
             }
         }, 3000);
     }
+    // Add these methods to your CalendarDashboard class
+
+/**
+ * Load gamification data from backend
+ */
+async loadGamificationData() {
+    try {
+        const response = await fetch('/api/gamification', {
+            method: 'GET',
+            credentials: 'same-origin'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            this.updateGamificationUI(data);
+        }
+    } catch (error) {
+        console.error('Error loading gamification data:', error);
+    }
+}
+
+/**
+ * Update gamification UI elements
+ */
+updateGamificationUI(data) {
+    // Update Level and XP
+    document.getElementById('userLevel').textContent = data.level;
+    document.getElementById('userXP').textContent = data.xp;
+    document.getElementById('xpToNext').textContent = data.xp_for_next_level;
+    
+    // Update Level Progress Bar
+    const progressBar = document.getElementById('levelProgress');
+    progressBar.style.width = `${data.level_progress}%`;
+    
+    // Update Streak
+    document.getElementById('userStreak').textContent = data.streak;
+    document.getElementById('flameCount').textContent = data.streak;
+    
+    // Update flame indicator animation for active streaks
+    const flameIndicator = document.getElementById('flameIndicator');
+    if (data.streak > 0) {
+        flameIndicator.classList.add('active');
+    } else {
+        flameIndicator.classList.remove('active');
+    }
+    
+    // Update Total Days
+    document.getElementById('totalDays').textContent = data.total_days_logged;
+    
+    // Update Achievement Badge
+    const achievement = this.getAchievementForLevel(data.level, data.streak);
+    document.getElementById('achievementBadge').innerHTML = `
+        <span class="badge-text">${achievement.name}</span>
+    `;
+    document.getElementById('achievementDesc').textContent = achievement.description;
+    
+    // Update Motivational Message
+    this.updateMotivationalMessage(data);
+}
+
+/**
+ * Get achievement badge based on level and streak
+ */
+getAchievementForLevel(level, streak) {
+    if (streak >= 30) {
+        return { name: 'Streak Master', description: '30+ day streak! Incredible dedication!' };
+    } else if (streak >= 14) {
+        return { name: 'Consistency King', description: '2 weeks straight! Keep it up!' };
+    } else if (streak >= 7) {
+        return { name: 'Week Warrior', description: 'One week streak achieved!' };
+    } else if (level >= 10) {
+        return { name: 'Study Expert', description: 'Level 10+! You\'re crushing it!' };
+    } else if (level >= 5) {
+        return { name: 'Rising Scholar', description: 'Level 5+! Making great progress!' };
+    } else if (level >= 3) {
+        return { name: 'Study Enthusiast', description: 'Level 3+! Building momentum!' };
+    } else {
+        return { name: 'Beginner', description: 'Just getting started!' };
+    }
+}
+
+/**
+ * Update motivational message
+ */
+updateMotivationalMessage(data) {
+    const messages = [
+        "Ready to conquer your goals today? 💪",
+        `Level ${data.level}! Your dedication is paying off! 🚀`,
+        `${data.streak} day streak! You're unstoppable! 🔥`,
+        "Every task completed makes you stronger! ⚡",
+        "Success is built one day at a time! 🏗️",
+        "Your future self will thank you! ✨",
+        "Progress, not perfection! 📈",
+        "You're building great habits! 🌟"
+    ];
+    
+    let motivationText;
+    
+    if (data.streak >= 7) {
+        motivationText = `🔥 ${data.streak} day streak! You're on fire! Keep the momentum going!`;
+    } else if (data.level >= 5) {
+        motivationText = `⚡ Level ${data.level}! Your consistency is building something amazing!`;
+    } else {
+        // Random motivational message
+        motivationText = messages[Math.floor(Math.random() * messages.length)];
+    }
+    
+    document.getElementById('motivationText').textContent = motivationText;
+}
+
+/**
+ * Award XP for completing tasks (call this when task is completed)
+ */
+async awardTaskCompletionXP(taskId) {
+    try {
+        // You can expand this later to award XP for task completion
+        // For now, we'll just refresh gamification data
+        await this.loadGamificationData();
+        
+        // Show XP notification
+        this.showXPNotification(5, 'Task completed!');
+        
+    } catch (error) {
+        console.error('Error awarding task XP:', error);
+    }
+}
+
+/**
+ * Show XP gain notification
+ */
+showXPNotification(xp, reason) {
+    const notification = document.createElement('div');
+    notification.className = 'xp-notification';
+    notification.innerHTML = `
+        <div class="xp-icon">⚡</div>
+        <div class="xp-text">+${xp} XP</div>
+        <div class="xp-reason">${reason}</div>
+    `;
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        z-index: 1002;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
 }
 
 // Initialize the dashboard when DOM is loaded

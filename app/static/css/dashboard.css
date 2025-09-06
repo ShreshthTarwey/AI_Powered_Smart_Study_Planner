@@ -758,3 +758,232 @@ body {
 .day-cell.has-today-tasks::after {
     background: #F59E0B;
 }
+
+/* Gamification Section Styles */
+.gamification-section {
+    margin-bottom: 3rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-color), #FFB800);
+}
+
+.xp-card::before {
+    background: linear-gradient(90deg, #6366F1, #8B5CF6);
+}
+
+.streak-card::before {
+    background: linear-gradient(90deg, #EF4444, #F97316);
+}
+
+.days-card::before {
+    background: linear-gradient(90deg, #10B981, #059669);
+}
+
+.achievement-card::before {
+    background: linear-gradient(90deg, #F59E0B, #EAB308);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.stat-content {
+    margin-bottom: 1rem;
+}
+
+.stat-label {
+    color: var(--muted-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-text);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stat-sublabel {
+    color: var(--muted-text);
+    font-size: 0.875rem;
+}
+
+/* Level Progress Bar */
+.level-progress {
+    margin-top: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #E5E7EB;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366F1, #8B5CF6);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-text {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+    text-align: center;
+}
+
+/* Streak Flame Indicator */
+.streak-visual {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.flame-indicator {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #EF4444, #F97316);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.flame-indicator.active {
+    animation: flame-pulse 2s infinite;
+}
+
+@keyframes flame-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.flame-count {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* Achievement Badge */
+.achievement-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #F59E0B, #EAB308);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.badge-text::before {
+    content: '⭐ ';
+}
+
+/* Motivation Card */
+.motivation-card {
+    background: linear-gradient(135deg, var(--accent-color), #FFB800);
+    color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-md);
+}
+
+.motivation-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.motivation-text {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .motivation-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
+
