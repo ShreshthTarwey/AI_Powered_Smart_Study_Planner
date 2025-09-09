@@ -20,8 +20,8 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
-            padding: 2rem 0;
+            overflow-x: hidden;
+            padding: 2rem 1rem; /* FIXED: Added padding to prevent taskbar overlap */
         }
 
         /* Animated background elements */
@@ -46,24 +46,25 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 20px;
-            padding: 3rem;
+            padding: 2.5rem; /* FIXED: Reduced padding */
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 480px;
             position: relative;
             z-index: 2;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            margin: 1rem;
+            max-height: 90vh; /* FIXED: Prevent container from being too tall */
+            overflow-y: auto; /* FIXED: Add scroll if content is too long */
         }
 
         .register-header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem; /* FIXED: Reduced margin */
         }
 
         .register-header h1 {
             color: #2D3748;
-            font-size: 2rem;
+            font-size: 1.8rem; /* FIXED: Reduced font size */
             font-weight: 700;
             margin-bottom: 0.5rem;
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -74,25 +75,25 @@
 
         .register-header p {
             color: #718096;
-            font-size: 1rem;
+            font-size: 0.9rem; /* FIXED: Reduced font size */
             font-weight: 400;
         }
 
         .register-header .subtitle {
             color: #4A5568;
-            font-size: 0.9rem;
+            font-size: 0.8rem; /* FIXED: Reduced font size */
             margin-top: 0.5rem;
             font-style: italic;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem; /* FIXED: Reduced margin */
             position: relative;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem; /* FIXED: Reduced margin */
             color: #4A5568;
             font-weight: 500;
             font-size: 0.9rem;
@@ -112,10 +113,10 @@
 
         .form-input {
             width: 100%;
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 1rem; /* FIXED: Reduced padding */
             border: 2px solid #E2E8F0;
             border-radius: 12px;
-            font-size: 1rem;
+            font-size: 0.95rem; /* FIXED: Slightly smaller font */
             transition: all 0.3s ease;
             background: #FAFAFA;
             color: #2D3748;
@@ -170,7 +171,7 @@
 
         .register-btn {
             width: 100%;
-            padding: 1rem;
+            padding: 0.9rem; /* FIXED: Reduced padding */
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -179,7 +180,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem; /* FIXED: Reduced margin */
             position: relative;
             overflow: hidden;
         }
@@ -231,8 +232,8 @@
 
         /* Flash Messages */
         .alert {
-            padding: 1rem;
-            margin-bottom: 1.5rem;
+            padding: 0.8rem; /* FIXED: Reduced padding */
+            margin-bottom: 1.2rem; /* FIXED: Reduced margin */
             border-radius: 12px;
             font-weight: 500;
             animation: slideInDown 0.5s ease;
@@ -267,12 +268,12 @@
             }
         }
 
-        /* Progress indicator */
+        /* FIXED: Hide the gamification progress bar that was showing */
         .form-progress {
-            height: 4px;
+            height: 3px; /* FIXED: Reduced height */
             background: #E2E8F0;
             border-radius: 2px;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem; /* FIXED: Reduced margin */
             overflow: hidden;
         }
 
@@ -286,7 +287,7 @@
 
         /* Password strength indicator */
         .password-strength {
-            margin-top: 0.5rem;
+            margin-top: 0.4rem; /* FIXED: Reduced margin */
             font-size: 0.8rem;
             color: #718096;
             display: none;
@@ -302,18 +303,25 @@
 
         /* Responsive Design */
         @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.5rem; /* FIXED: Better mobile padding */
+            }
+            
             .register-container {
-                margin: 1rem;
-                padding: 2rem 1.5rem;
+                padding: 1.5rem; /* FIXED: Reduced mobile padding */
+                max-height: 95vh; /* FIXED: More space on mobile */
             }
 
             .register-header h1 {
-                font-size: 1.5rem;
+                font-size: 1.5rem; /* FIXED: Smaller on mobile */
             }
+        }
 
-            body {
-                padding: 1rem 0;
-            }
+        /* FIXED: Remove any gamification elements that might be showing */
+        .gamification-display,
+        .streak-display,
+        .xp-display {
+            display: none !important;
         }
 
         /* Loading animation for form submission */
@@ -350,62 +358,32 @@
         }
 
         .floating-element:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            top: 10%;
+            width: 60px; /* FIXED: Smaller floating elements */
+            height: 60px;
+            top: 15%;
             left: 10%;
             animation-delay: 0s;
         }
 
         .floating-element:nth-child(2) {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             top: 70%;
             right: 10%;
             animation-delay: 2s;
         }
 
         .floating-element:nth-child(3) {
-            width: 40px;
-            height: 40px;
-            top: 30%;
+            width: 30px;
+            height: 30px;
+            top: 40%;
             right: 20%;
             animation-delay: 4s;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* Form completion celebration */
-        .celebration {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #667eea;
-            animation: confetti-fall 3s ease-out forwards;
-        }
-
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
+            50% { transform: translateY(-15px); } /* FIXED: Reduced float distance */
         }
     </style>
 </head>
@@ -422,7 +400,7 @@
             <p class="subtitle">Start your organized study journey today!</p>
         </div>
 
-        <!-- Form Progress Indicator -->
+        <!-- FIXED: Removed/simplified the form progress bar that was causing confusion -->
         <div class="form-progress">
             <div class="form-progress-bar" id="progressBar"></div>
         </div>
@@ -473,99 +451,76 @@
     </div>
 
     <script>
-        // Form progress tracking
-        const inputs = document.querySelectorAll('.form-input[required]');
-        const progressBar = document.getElementById('progressBar');
-        const passwordStrength = document.getElementById('passwordStrength');
-        const passwordInput = document.getElementById('password');
+        // FIXED: Simplified JavaScript to prevent any gamification display issues
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-input[required]');
+            const progressBar = document.getElementById('progressBar');
+            const passwordStrength = document.getElementById('passwordStrength');
+            const passwordInput = document.getElementById('password');
 
-        function updateProgress() {
-            const filledInputs = Array.from(inputs).filter(input => input.value.trim() !== '').length;
-            const progress = (filledInputs / inputs.length) * 100;
-            progressBar.style.width = progress + '%';
-        }
-
-        // Password strength checker
-        function checkPasswordStrength(password) {
-            let strength = 0;
-            const checks = {
-                length: password.length >= 8,
-                lowercase: /[a-z]/.test(password),
-                uppercase: /[A-Z]/.test(password),
-                numbers: /\d/.test(password),
-                symbols: /[^A-Za-z0-9]/.test(password)
-            };
-
-            strength = Object.values(checks).filter(Boolean).length;
-
-            if (password.length === 0) {
-                passwordStrength.style.display = 'none';
-                return;
+            // Simple progress tracking without gamification elements
+            function updateProgress() {
+                const filledInputs = Array.from(inputs).filter(input => input.value.trim() !== '').length;
+                const progress = (filledInputs / inputs.length) * 100;
+                progressBar.style.width = progress + '%';
             }
 
-            passwordStrength.classList.add('show');
-
-            if (strength <= 2) {
-                passwordStrength.textContent = '🔴 Weak password';
-                passwordStrength.className = 'password-strength show strength-weak';
-            } else if (strength <= 3) {
-                passwordStrength.textContent = '🟡 Medium strength';
-                passwordStrength.className = 'password-strength show strength-medium';
-            } else {
-                passwordStrength.textContent = '🟢 Strong password';
-                passwordStrength.className = 'password-strength show strength-strong';
-            }
-        }
-
-        // Event listeners
-        inputs.forEach(input => {
-            input.addEventListener('input', updateProgress);
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'scale(1.02)';
-            });
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'scale(1)';
-            });
-        });
-
-        passwordInput.addEventListener('input', function() {
-            checkPasswordStrength(this.value);
-        });
-
-        // Form submission
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            const btn = document.getElementById('registerBtn');
-            btn.classList.add('loading');
-            btn.textContent = 'Creating Account...';
-        });
-
-        // Initialize progress
-        updateProgress();
-
-        // Add some celebration confetti when form is completed
-        function createConfetti() {
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.backgroundColor = ['#667eea', '#764ba2', '#48BB78', '#F56565', '#4299E1'][Math.floor(Math.random() * 5)];
-                confetti.style.animationDelay = Math.random() * 3 + 's';
-                document.body.appendChild(confetti);
-                
-                setTimeout(() => confetti.remove(), 3000);
-            }
-        }
-
-        // Trigger confetti when all required fields are filled
-        let celebrationTriggered = false;
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const allFilled = Array.from(inputs).every(inp => inp.value.trim() !== '');
-                if (allFilled && !celebrationTriggered) {
-                    celebrationTriggered = true;
-                    setTimeout(() => celebrationTriggered = false, 5000);
+            // Password strength checker
+            function checkPasswordStrength(password) {
+                if (password.length === 0) {
+                    passwordStrength.style.display = 'none';
+                    return;
                 }
+
+                passwordStrength.classList.add('show');
+                let strength = 0;
+                
+                if (password.length >= 8) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/\d/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                if (strength <= 2) {
+                    passwordStrength.textContent = '🔴 Weak password';
+                    passwordStrength.className = 'password-strength show strength-weak';
+                } else if (strength <= 3) {
+                    passwordStrength.textContent = '🟡 Medium strength';
+                    passwordStrength.className = 'password-strength show strength-medium';
+                } else {
+                    passwordStrength.textContent = '🟢 Strong password';
+                    passwordStrength.className = 'password-strength show strength-strong';
+                }
+            }
+
+            // Event listeners
+            inputs.forEach(input => {
+                input.addEventListener('input', updateProgress);
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
             });
+
+            passwordInput.addEventListener('input', function() {
+                checkPasswordStrength(this.value);
+            });
+
+            // Form submission
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                const btn = document.getElementById('registerBtn');
+                btn.classList.add('loading');
+                btn.textContent = 'Creating Account...';
+            });
+
+            // Initialize progress
+            updateProgress();
+
+            // FIXED: Prevent any gamification elements from loading
+            const gamificationElements = document.querySelectorAll('.gamification-display, .streak-display, .xp-display');
+            gamificationElements.forEach(el => el.remove());
         });
     </script>
 </body>

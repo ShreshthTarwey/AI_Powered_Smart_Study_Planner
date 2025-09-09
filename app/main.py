@@ -10,8 +10,10 @@ from .motivation_service import get_motivation_service
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
 @main_bp.route('/')
+# @main_bp.route('/')
 def home():
-    return "<h1>Welcome to Smart Study Planner</h1><p><a href='/auth/login'>Login</a> | <a href='/auth/register'>Register</a></p>"
+    return render_template('homepage.html')
+
 
 @main_bp.route('/dashboard')
 @login_required
