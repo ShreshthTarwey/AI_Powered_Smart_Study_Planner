@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, current_app
 from flask_login import login_required, current_user
 from .models import Task
 from . import db
 from datetime import datetime
+from .motivation_service import get_motivation_service
+
+
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
@@ -102,3 +105,44 @@ def gamification_api():
         'level_progress': current_user.get_level_progress(),
         'last_login_date': current_user.last_login_date.isoformat() if current_user.last_login_date else None
     })
+
+# Add this import at the top
+
+
+# Update the import
+from .motivation_service import get_motivation_service
+
+# Update the route
+@main_bp.route('/api/motivation')
+@login_required
+def motivation_api():
+    """Generate personalized motivational message"""
+    try:
+        api_key = current_app.config.get('GEMINI_API_KEY')
+        motivation_service = get_motivation_service(api_key)
+        message = motivation_service.generate_personalized_motivation(current_user)
+        
+        return jsonify({
+            'message': message,
+            'generated_at': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'message': "Keep pushing forward! Every step counts! 💪",
+            'generated_at': datetime.now().isoformat(),
+            'error': str(e)
+        }), 200
+
+# Add this TEMPORARY debug route to main.py
+@main_bp.route('/api/debug-config')
+@login_required
+def debug_config():
+    """Debug configuration - REMOVE IN PRODUCTION"""
+    api_key = current_app.config.get('GEMINI_API_KEY', 'NOT_SET')
+    return jsonify({
+        'api_key_configured': len(api_key) > 0,
+        'api_key_length': len(api_key),
+        'api_key_preview': api_key[:10] + "..." if len(api_key) > 10 else api_key
+    })
+

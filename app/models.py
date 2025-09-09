@@ -3,7 +3,11 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 
+# Ye class User application ke users ko represent karti hai.
 
+# db.Model ka matlab hai ki ye ek database table hoga.
+
+# UserMixin se ye class login-related methods inherit karti hai, jaise is_authenticated and is_active.
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False)

@@ -15,13 +15,15 @@ class CalendarDashboard {
     this.currentDate = new Date();
     this.tasks = new Map();
     this.selectedDate = null;
-
+    this.motivationInterval = null; 
     this.initializeElements();
     this.attachEventListeners();
     this.loadTasks();
-    this.loadGamificationData(); // ADD THIS LINE
+    this.loadGamificationData();
+    this.startMotivationAutoRefresh(); 
     this.renderCalendar();
-    }
+}
+
 
     initializeElements() {
         // Calendar elements
@@ -760,6 +762,70 @@ getAchievementForLevel(level, streak) {
     } else {
         return { name: 'Beginner', description: 'Just getting started!' };
     }
+}
+/**
+ * Load AI-generated motivational message
+ */
+async loadMotivationalMessage() {
+    try {
+        const response = await fetch('/api/motivation', {
+            method: 'GET',
+            credentials: 'same-origin'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const motivationElement = document.getElementById('motivationText');
+            
+            // Add fade effect when updating
+            motivationElement.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                motivationElement.textContent = data.message;
+                motivationElement.style.opacity = '1';
+            }, 200);
+            
+            console.log('New motivation loaded:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading motivational message:', error);
+        // Keep existing default message on error
+    }
+}
+
+/**
+ * Start auto-refreshing motivational messages every 10 seconds
+ */
+startMotivationAutoRefresh() {
+    // Load initial message
+    this.loadMotivationalMessage();
+    
+    // Set up auto-refresh every 10 seconds (10000 milliseconds)
+    this.motivationInterval = setInterval(() => {
+        console.log('Auto-refreshing motivation message...');
+        this.loadMotivationalMessage();
+    }, 10000); // 10 seconds
+    
+    console.log('Motivation auto-refresh started (every 10 seconds)');
+}
+
+/**
+ * Stop auto-refreshing motivational messages
+ */
+stopMotivationAutoRefresh() {
+    if (this.motivationInterval) {
+        clearInterval(this.motivationInterval);
+        this.motivationInterval = null;
+        console.log('Motivation auto-refresh stopped');
+    }
+}
+
+/**
+ * Manually refresh motivation (for testing)
+ */
+async refreshMotivationNow() {
+    console.log('Manual motivation refresh triggered');
+    await this.loadMotivationalMessage();
 }
 
 /**
